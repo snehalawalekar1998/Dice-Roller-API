@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎲 Dice Roller</title>
+   
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #f6d365, #fda085);
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+            color: #fff;
+        }
+
+        .dice-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        #dice_result {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .roll-dice-btn {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .roll-dice-btn:hover {
+            background-color: #e68900;
+            transform: scale(1.05);
+        }
+
+        select {
+            font-size: 16px;
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: none;
+            background: #fff;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .dice-emoji {
+            font-size: 60px;
+            margin-top: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .dice-roll-animation {
+            animation: roll 0.5s ease-in-out;
+        }
+
+        @keyframes roll {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+   
+    <script>
+        async function rollDice() {
+            const sides = document.getElementById("dice_type").value;
+            const diceEmoji = document.getElementById("dice_emoji");
+
+            // Add rolling animation
+            diceEmoji.classList.add("dice-roll-animation");
+
+            try {
+                const response = await fetch(`http://192.168.100.4:5001/roll-dice?sides=${sides}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch dice roll");
+                }
+                const data = await response.json();
+                document.getElementById("dice_result").innerText = `🎲 You rolled a ${data.roll} on a ${data.sides}-sided dice!`;
+            } catch (error) {
+                document.getElementById("dice_result").innerText = "⚠️ Oops! Unable to roll the dice. Try again.";
+            } finally {
+                // Remove animation after roll completes
+                setTimeout(() => diceEmoji.classList.remove("dice-roll-animation"), 500);
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="dice-container">
+        <h1>🎲 Roll a Virtual Dice</h1>
+        <p>Select the type of dice to roll:</p>
+        <select id="dice_type">
+            <option value="6">6-Sided 🎲</option>
+            <option value="10">10-Sided 🎯</option>
+            <option value="20">20-Sided 🏹</option>
+        </select>
+        <br>
+        <button class="roll-dice-btn" onclick="rollDice()">Roll the Dice</button>
+        <div class="dice-emoji" id="dice_emoji">🎲</div>
+        <p id="dice_result">Click the button to roll a dice!</p>
+    </div>
+
+</body>
+</html>
+
+	
